@@ -14,9 +14,13 @@ export const store = createStore({
       }
     },
     actions: {
-        getEngTasks: async (context) => {
+        getEngTasks: async ({commit}) => {
           let {data} = await Axios.get('/api/eng');
-          context.commit('SET_ENGTASKS', data);
+          commit('SET_ENGTASKS', data);
+        },
+        setCompleted: async ({}, payload) => {
+          const completed = payload.completed ? 1 : 0;
+          await Axios.put(`/api/eng/task?id=${payload.id}&completed=${completed}`);
         }
     }
 })
