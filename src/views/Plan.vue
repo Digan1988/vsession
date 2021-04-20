@@ -4,6 +4,10 @@
             <flip-countdown deadline="2021-05-09 00:00:00"></flip-countdown>
         </div>
         <div> 
+            <div style="display: flex;justify-content: center;align-items: center;">
+                <img src="https://img.icons8.com/bubbles/50/000000/milkshake.png"/>
+                <p>До призового молочного коктейля осталось выполнить {{bonusLeft}} заданий</p>
+            </div>
             <ul class="list-group list-group-flush">
                 <li v-for="(task) in tasks" v-bind:key="task.id" class="list-group-item" :class="{ active: isActive(task), expired: isExpired(task) }">
                     <span class="badge badge-info">{{task.section}}</span>
@@ -31,7 +35,19 @@ export default {
     },
     data() {
         return {
-            
+            milkshakeGoals:[8, 16, 24, 32, 38],
+            praise: [
+                "Well done!",
+                "Good for you!",
+                "You rock!",
+                "You rule!",
+                "I knew you could do it!",
+                "Good job!",
+                "Bravo!",
+                "You’ve got it!",
+                "Keep it up!",
+                "I’m proud of you!"
+            ]
         }
     },
     methods: {
@@ -56,11 +72,24 @@ export default {
         completeClick(task) {
             task.completed = !task.completed;
             this.$store.dispatch('setCompleted', { id: task.id, completed: task.completed  });
+
+            if(task.completed) {
+                var item = this.praise[Math.floor(Math.random() * this.praise.length)];
+                alert(item);
+            }
         }
     },
     computed: {
         tasks() {
             return this.$store.state.tasks;
+        },
+        completed(){
+            return this.tasks.filter(item => { return item.completed; }).length;
+        },
+        bonusLeft() {
+            const completed = this.completed;
+            const near = this.milkshakeGoals.find(item => { return item >= completed; });
+            return near - completed;
         }
     },
     mounted() {
@@ -70,7 +99,11 @@ export default {
         
     },
     watch: {
-        
+        completed(val) {
+            if(this.milkshakeGoals.indexOf(val) !== -1){
+                alert('Вы заслужили молочный коктейль!');
+            }
+        }
     }
 }
 </script>
